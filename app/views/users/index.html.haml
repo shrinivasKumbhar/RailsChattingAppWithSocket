@@ -1,0 +1,58 @@
+
+- if session[:current_user_id].present?
+  %input{:type => "hidden", :id => "login_user_id", :value => "#{session[:current_user_id]}"}
+  - if @user_list.present?
+    -#%select{:name => "user"}
+    #accordionContainer
+      %span{:style => 'float:left;font-size: 20px;'}
+        Welcome
+        - user = User.find_by_id(session[:current_user_id])
+        = user.name
+      %span{:style => 'float:right;font-size: 20px;'}
+        -#= link_to "Logout", controller: "users", action: "logout"
+        #logout
+          Logout
+      %h1{:style => 'text-align:center;'}
+        Chatting App
+      %ul
+        - @user_list.each do |user|
+          -#%option{:id => "#{user.id}"} #{user.name}
+          - if session[:current_user_id] != user.id
+            %li{:user_id => "#{user.id}", :class => "accorItem"}
+              %input{:checked => "", :type => "checkbox"}
+                %i
+                %h2
+                  = user.name
+                %p
+                  %span.messageContainer
+                    %span{:id => "messagesBox#{user.id}"}
+                    %br
+                  %input{:type => "text", :id => "messageText#{user.id}", :style => "width: 320px; float: left;margin-left: 15px;"}
+                  %button{:class => "send_message", :user_id => "sendBtn#{user.id}", :style => "float: left;"}
+                    >>
+-else
+  #accordionContainer
+    %h1{:style => 'text-align:center;'}
+      Chatting App
+    .login
+      %h2
+        Login
+      = form_for @user, {:url => url_for(:controller => 'users' , :action => 'login'), :html => {:class => 'formWrapper'}} do |f|
+        = f.text_field :email, :id => 'loginEmail', :placeholder => "Enter Email"
+        %br
+        = f.password_field :password , :placeholder => "password", :id => "loginPassword"
+        %br
+        = f.button :Login, :onclick => "userLogin()", :type => "button"
+    .signup
+      %h2
+        Signup
+      = form_for @user, {:url => url_for(:controller => 'users' , :action => 'create'), :html => {:class => 'formWrapper'}} do |f|
+        = f.text_field :name ,:id => 'registerName', :class => 'name' , :placeholder => 'Enter Name'
+        %br
+        = f.text_field :email, :id => 'registerEmail', :placeholder => "Enter Email"
+        %br
+        = f.password_field :password , :placeholder => "password", :id => "registerPassword"
+        %br
+        = f.button :signup, :onclick => "userRegister()",:type => "button"
+
+
